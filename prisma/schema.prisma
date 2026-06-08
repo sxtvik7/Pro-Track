@@ -1,0 +1,153 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//-------------- TRAINER --------------------
+
+model Trainer {
+  id             String   @id @default(cuid())
+
+  clerkUserId    String   @unique
+
+  fullName       String?
+  phone          String?
+  bio            String?
+  specialization String?
+  experience     Int?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  clients        Client[]
+}
+
+//-------------- CLIENT --------------------
+
+model Client {
+  id                String   @id @default(cuid())
+
+  trainerId         String
+  trainer           Trainer  @relation(fields: [trainerId], references: [id])
+
+  // Personal Information
+  fullName          String
+  age               Int?
+  gender            String?
+
+  phone             String?
+  email             String?
+
+  emergencyContact  String?
+
+  // Fitness Information
+  goal              String?
+
+  activityLevel     String?
+
+  injuries          String?
+  medicalConditions String?
+
+  startDate         DateTime?
+
+  // Optional Business Fields
+  monthlyFee        Float?
+  paymentStatus     String?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  progressRecords   ProgressRecord[]
+  workoutPlans      WorkoutPlan[]
+  notes             Note[]
+}
+
+//-------------- PROGRESS RECORD --------------------
+
+model ProgressRecord {
+  id        String   @id @default(cuid())
+
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  date      DateTime @default(now())
+
+  weight    Float?
+  bodyFat   Float?
+
+  chest     Float?
+  waist     Float?
+  hips      Float?
+
+  arms      Float?
+  thighs    Float?
+
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//-------------- NOTE --------------------
+
+model Note {
+  id        String   @id @default(cuid())
+
+  clientId  String
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  content   String
+  mood      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//-------------- WORKOUT PLAN --------------------
+
+model WorkoutPlan {
+  id          String   @id @default(cuid())
+
+  clientId    String
+  client      Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  name        String
+  goal        String?
+
+  daysPerWeek Int?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  exercises   Exercise[]
+}
+
+//-------------- EXERCISES --------------------
+
+model Exercise {
+  id            String   @id @default(cuid())
+
+  workoutPlanId String
+  workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
+
+  name          String
+
+  sets          Int?
+  reps          String?
+
+  restTime      Int?
+
+  notes         String?
+
+  createdAt     DateTime @default(now())
+}
