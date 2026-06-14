@@ -23,28 +23,20 @@ export default async function ClientsPage() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Clients</h1>
 
-        <Link
-          href="/clients/new"
-          className="rounded border px-4 py-2"
-        >
+        <Link href="/clients/new" className="rounded border px-4 py-2">
           Add Client
         </Link>
       </div>
 
       <div className="space-y-3">
         {clients.map((client) => (
-          <div
-            key={client.id}
-            className="rounded border p-4"
-          >
-            <h2 className="font-semibold">
-              {client.fullName}
-            </h2>
-
-            <p>{client.goal}</p>
-
-            <p>{client.phone}</p>
-          </div>
+          <Link href={`/clients/${client.id}`} key={client.id}>
+            <div className="rounded border p-4">
+              <h2>{client.fullName}</h2>
+              <p>{client.goal}</p>
+              <p>{client.phone}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

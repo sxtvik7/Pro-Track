@@ -1,14 +1,35 @@
 import { createClient } from "@/actions/create-client";
+import { updateClient } from "@/actions/update-client";
 
-export default function ClientForm() {
+interface ClientFormProps {
+  initialData?: {
+    id?: string;
+    fullName: string;
+    age: number | null;
+    phone: string | null;
+    goal: string | null;
+  };
+}
+
+export default function ClientForm({
+  initialData,
+}: ClientFormProps) {
+  
+  const formAction = initialData?.id
+    ? updateClient.bind(null, initialData.id)
+    : createClient;
+
+    const isEditing = !!initialData?.id;
+
   return (
-    <form className="space-y-4" action={createClient}>
+    <form className="space-y-4" action={formAction}>
       <div>
         <label>Full Name</label>
         <input
           type="text"
           name="fullName"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.fullName}
         />
       </div>
 
@@ -18,6 +39,7 @@ export default function ClientForm() {
           type="number"
           name="age"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.age ?? ""}
         />
       </div>
 
@@ -27,6 +49,7 @@ export default function ClientForm() {
           type="text"
           name="phone"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.phone ?? ""}
         />
       </div>
 
@@ -36,14 +59,15 @@ export default function ClientForm() {
           type="text"
           name="goal"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.goal ?? ""}
         />
       </div>
 
       <button
         type="submit"
-        className="rounded border px-4 py-2"
+        className="rounded border px-4 py-2 cursor-pointer"
       >
-        Create Client
+        {isEditing ? "Update Client" : "Create Client"}
       </button>
     </form>
   );
