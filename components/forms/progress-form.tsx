@@ -1,11 +1,31 @@
 import { createProgressRecord } from "@/actions/create-progress-record";
+import { updateProgressRecord } from "@/actions/update-progress-record";
 
 interface ProgressFormProps {
   clientId: string;
+
+  initialData?: {
+    id?: string;
+
+    weight: number | null;
+    bodyFat: number | null;
+    chest: number | null;
+    waist: number | null;
+    arms: number | null;
+    notes: string | null;
+  };
 }
 
-export default function ProgressForm({ clientId }: ProgressFormProps) {
-  const formAction = createProgressRecord.bind(null, clientId);
+export default function ProgressForm({
+  clientId,
+  initialData,
+}: ProgressFormProps) {
+  const formAction = initialData?.id
+    ? updateProgressRecord.bind(null, initialData.id)
+    : createProgressRecord.bind(null, clientId);
+
+  const isEditing = !!initialData?.id;
+
   return (
     <form className="space-y-4" action={formAction}>
       <div>
@@ -15,6 +35,7 @@ export default function ProgressForm({ clientId }: ProgressFormProps) {
           step="0.1"
           name="weight"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.weight ?? ""}
         />
       </div>
 
@@ -25,6 +46,7 @@ export default function ProgressForm({ clientId }: ProgressFormProps) {
           step="0.1"
           name="bodyFat"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.bodyFat ?? ""}
         />
       </div>
 
@@ -35,6 +57,7 @@ export default function ProgressForm({ clientId }: ProgressFormProps) {
           step="0.1"
           name="chest"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.chest ?? ""}
         />
       </div>
 
@@ -45,6 +68,7 @@ export default function ProgressForm({ clientId }: ProgressFormProps) {
           step="0.1"
           name="waist"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.waist ?? ""}
         />
       </div>
 
@@ -55,16 +79,21 @@ export default function ProgressForm({ clientId }: ProgressFormProps) {
           step="0.1"
           name="arms"
           className="w-full border p-2 rounded"
+          defaultValue={initialData?.arms ?? ""}
         />
       </div>
 
       <div>
         <label>Notes</label>
-        <textarea name="notes" className="w-full border p-2 rounded" />
+        <textarea
+          name="notes"
+          className="w-full border p-2 rounded"
+          defaultValue={initialData?.notes ?? ""}
+        />
       </div>
 
       <button type="submit" className="rounded border px-4 py-2">
-        Add Progress Record
+        {isEditing ? "Update Record" : "Add Progress Record"}
       </button>
     </form>
   );

@@ -9,9 +9,7 @@ interface ProgressPageProps {
   }>;
 }
 
-export default async function ProgressPage({
-  params,
-}: ProgressPageProps) {
+export default async function ProgressPage({ params }: ProgressPageProps) {
   const { id } = await params;
 
   const trainer = await getCurrentTrainer();
@@ -38,12 +36,26 @@ export default async function ProgressPage({
     notFound();
   }
 
+  const records = client.progressRecords;
+
+  const latestRecord = records[0];
+  const firstRecord = records[records.length - 1];
+
+  const currentWeight = latestRecord?.weight;
+  const startingWeight = firstRecord?.weight;
+
+  const weightChange =
+    currentWeight !== null &&
+    currentWeight !== undefined &&
+    startingWeight !== null &&
+    startingWeight !== undefined
+      ? currentWeight - startingWeight
+      : null;
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">
-          Progress History
-        </h1>
+        <h1 className="text-2xl font-bold">Progress History</h1>
 
         <Link
           href={`/clients/${client.id}/progress/new`}
@@ -53,28 +65,58 @@ export default async function ProgressPage({
         </Link>
       </div>
 
-      {client.progressRecords.map((record) => (
-        <div
-          key={record.id}
-          className="rounded border p-4"
-        >
-          <p>
-            Weight: {record.weight ?? "-"} kg
-          </p>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="rounded border p-4">
+          <p className="text-sm text-muted-foreground">Current Weight</p>
+          <p className="text-2xl font-bold">{currentWeight ?? "-"} kg</p>
+        </div>
 
-          <p>
-            Body Fat: {record.bodyFat ?? "-"} %
-          </p>
+        <div className="rounded border p-4">
+          <p className="text-sm text-muted-foreground">Starting Weight</p>
+          <p className="text-2xl font-bold">{startingWeight ?? "-"} kg</p>
+        </div>
 
-          <p>
-            Waist: {record.waist ?? "-"} cm
-          </p>
-
-          <p>
-            Date: {record.date.toLocaleDateString()}
+        <div className="rounded border p-4">
+          <p className="text-sm text-muted-foreground">Weight Change</p>
+          <p className="text-2xl font-bold">
+            {weightChange !== null ? `${weightChange.toFixed(1)} kg` : "-"}
           </p>
         </div>
-      ))}
+      </div>
+
+      {/* Progress History */}
+      <div className="space-y-4">
+        {records.length === 0 ? (
+          <div className="rounded border p-4">No progress records found.</div>
+        ) : (
+          records.map((record) => (
+            <Link
+              key={record.id}
+              href={`/clients/${client.id}/progress/${record.id}`}
+            >
+              <div className="rounded border p-4 mb-3">
+
+              <p>
+                <strong>Weight:</strong> {record.weight ?? "-"} kg
+              </p>
+
+              <p>
+                <strong>Body Fat:</strong> {record.bodyFat ?? "-"} %
+              </p>
+
+              <p>
+                <strong>Waist:</strong> {record.waist ?? "-"} cm
+              </p>
+
+              <p>
+                <strong>Date:</strong> {record.date.toLocaleDateString()}
+              </p>
+              </div>
+            </Link>
+          ))
+        )}
+      </div>
     </div>
   );
 }
