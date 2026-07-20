@@ -83,6 +83,13 @@ export default async function ClientPage({ params }: ClientPageProps) {
             Progress Records
           </Link>
 
+          <Link
+            href={`/clients/${client.id}/notes`}
+            className="rounded border px-4 py-2"
+          >
+            Notes
+          </Link>
+
           <form action={deleteClient.bind(null, client.id)}>
             <button
               type="submit"
