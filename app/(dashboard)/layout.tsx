@@ -16,18 +16,18 @@ export default async function DashboardLayout({
   }
 
   return (
-     <div className="min-h-screen md:flex">
-  <Sidebar />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 md:flex">
+      <Sidebar />
 
-  <div className="flex-1">
-    <Header />
+      <div className="flex-1 md:min-w-0">
+        <Header />
 
-    <main className="p-4 pb-20 md:pb-4">
-      {children}
-    </main>
+        <main className="mx-auto max-w-5xl p-4 pb-20 sm:p-6 md:pb-6">
+          {children}
+        </main>
 
-    <BottomNav />
-  </div>
-</div>
+        <BottomNav />
+      </div>
+    </div>
   );
 }

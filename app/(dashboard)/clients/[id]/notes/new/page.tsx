@@ -2,6 +2,8 @@ import NoteForm from "@/components/forms/note-form";
 import { getCurrentTrainer } from "@/lib/current-trainer";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 interface NewNotePageProps {
   params: Promise<{
@@ -9,9 +11,7 @@ interface NewNotePageProps {
   }>;
 }
 
-export default async function NewNotePage({
-  params,
-}: NewNotePageProps) {
+export default async function NewNotePage({ params }: NewNotePageProps) {
   const { id } = await params;
 
   const trainer = await getCurrentTrainer();
@@ -32,16 +32,27 @@ export default async function NewNotePage({
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">
-        Add Note
-      </h1>
+    <div className="mx-auto max-w-lg space-y-6">
+      <Link
+        href={`/clients/${client.id}/notes`}
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        Notes
+      </Link>
 
-      <p className="text-sm text-muted-foreground">
-        Client: {client.fullName}
-      </p>
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
+          Add note
+        </h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          New note for {client.fullName}.
+        </p>
+      </div>
 
-      <NoteForm clientId={client.id} />
+      <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
+        <NoteForm clientId={client.id} />
+      </div>
     </div>
   );
 }
